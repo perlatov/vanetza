@@ -21,7 +21,7 @@ Throughpout_Sender::PortType Throughpout_Sender::port()
 
 void Throughpout_Sender::indicate(const DataIndication& indication, UpPacketPtr packet)
 {
-    std::cout << "Throughpout Server App received a packet" << std::endl;
+    //theoretically rx packet payload should be processed here - but i have no idea how to access and handle it
 }
 
 void Throughpout_Sender::schedule_timer()
@@ -56,16 +56,13 @@ void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
         DownPacketPtr packet { new DownPacket() };
         packet->layer(OsiLayer::Application) = ByteBuffer {counter_split[0], counter_split[1], 0x0 /*payload*/};
 
-        //DownPacket packet;
-        //packet.layer(OsiLayer::Application) = ByteBuffer { 0xC0, 0xFF, 0xEE };
-
         DataRequest request;
         request.transport_type = geonet::TransportType::SHB;
         request.communication_profile = geonet::CommunicationProfile::ITS_G5;
         request.its_aid = aid::CA;
         auto confirm = Application::request(request, std::move(packet));
         if (!confirm.accepted()) {
-            throw std::runtime_error("Throughpout Client App data request failed");
+            throw std::runtime_error("Throughpout sender data request failed");
         }
 
         schedule_timer();

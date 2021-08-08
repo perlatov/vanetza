@@ -3,6 +3,7 @@
 #include "cam_application.hpp"
 #include "hello_application.hpp"
 #include "thr_s_application.hpp"
+#include "ping_s_application.hpp"
 #include "link_layer.hpp"
 #include "positioning.hpp"
 #include "router_context.hpp"
@@ -159,7 +160,14 @@ int main(int argc, const char** argv)
                 std::unique_ptr<Throughpout_Sender> thr_s {
                     new Throughpout_Sender(io_service, std::chrono::milliseconds(vm["thr_s-i"].as<unsigned>()))
                 };
-                apps.emplace(app_name, std::move(thr_s));           
+                apps.emplace(app_name, std::move(thr_s));  
+
+            //ping_s app entry point    
+            } else if (app_name == "ping_s") {
+                std::unique_ptr<Ping_Sender> ping_s {
+                    new Ping_Sender(io_service, std::chrono::milliseconds(500))
+                };
+                apps.emplace(app_name, std::move(ping_s));          
 
             } else {
                 std::cerr << "skip unknown application '" << app_name << "'\n";
