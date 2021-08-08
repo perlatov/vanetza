@@ -2,6 +2,7 @@
 #include "benchmark_application.hpp"
 #include "cam_application.hpp"
 #include "hello_application.hpp"
+#include "thr_s_application.hpp"
 #include "link_layer.hpp"
 #include "positioning.hpp"
 #include "router_context.hpp"
@@ -28,6 +29,7 @@ int main(int argc, const char** argv)
         ("require-gnss-fix", "Suppress transmissions while GNSS position fix is missing")
         ("gn-version", po::value<unsigned>()->default_value(1), "GeoNetworking protocol version to use.")
         ("cam-interval", po::value<unsigned>()->default_value(1000), "CAM sending interval in milliseconds.")
+        ("thr_s-i", po::value<unsigned>()->default_value(1000), "BTP-B sending interval in milliseconds.")
         ("print-rx-cam", "Print received CAMs")
         ("print-tx-cam", "Print generated CAMs")
         ("benchmark", "Enable benchmarking")
@@ -151,6 +153,14 @@ int main(int argc, const char** argv)
                     new BenchmarkApplication(io_service)
                 };
                 apps.emplace(app_name, std::move(benchmark));
+
+            //thr_s app entry point    
+            } else if (app_name == "thr_s") {
+                std::unique_ptr<Throughpout_Sender> thr_s {
+                    new Throughpout_Sender(io_service, std::chrono::milliseconds(vm["thr_s-i"].as<unsigned>()))
+                };
+                apps.emplace(app_name, std::move(thr_s));           
+
             } else {
                 std::cerr << "skip unknown application '" << app_name << "'\n";
             }

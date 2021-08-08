@@ -17,6 +17,7 @@ add_executable(socktap
     dcc_passthrough.cpp
     ethernet_device.cpp
     hello_application.cpp
+    thr_s_application.cpp
     link_layer.cpp
     main.cpp
     positioning.cpp
