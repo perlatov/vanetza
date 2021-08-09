@@ -42,9 +42,6 @@ void Throughpout_Sender::message_counter()
     {
         counter++;
     }
-
-    counter_split[0] = counter >> 8;    //lsb
-    counter_split[1] = counter;         //msb
 }
 
 void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
@@ -53,8 +50,14 @@ void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
 
         message_counter();
 
+        // max. payload app can process
+        std::vector<uint8_t> vector_payload(1365);
+
+        vector_payload.insert(vector_payload.begin(), counter);
+        vector_payload.insert(vector_payload.begin(), counter >> 8);
+
         DownPacketPtr packet { new DownPacket() };
-        packet->layer(OsiLayer::Application) = ByteBuffer {counter_split[0], counter_split[1], 0x0 /*payload*/};
+        packet->layer(OsiLayer::Application) = ByteBuffer{vector_payload};
 
         DataRequest request;
         request.transport_type = geonet::TransportType::SHB;

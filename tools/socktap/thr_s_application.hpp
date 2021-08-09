@@ -15,8 +15,6 @@ public:
 private:
 
     unsigned int counter = 0;
-    unsigned char counter_split[2];
-    unsigned char payload[1500] = { 0xEE }; 
 
     void schedule_timer();
     void message_counter();
