@@ -18,12 +18,20 @@ Throughpout_Receiver::PortType Throughpout_Receiver::port()
     return host_cast<uint16_t>(43);
 }
 
+Application::PromiscuousHook* Throughpout_Receiver::promiscuous_hook()
+{
+    return this;
+}
+
+void Throughpout_Receiver::tap_packet(const DataIndication& indication, const UpPacket& packet)
+{
+    ++m_received_messages;
+}
+
 void Throughpout_Receiver::indicate(const DataIndication& indication, UpPacketPtr packet)
 {
-    //theoretically rx packet payload should be processed here - but i have no idea how to access and handle it
-    vanetza::byte_view_range bytes = create_byte_view(*packet, OsiLayer::Application);
-    counter_new = bytes[0] + bytes[1] << 8;
-    counter_processor();
+    vanetza::byte_view_range bytes = create_byte_view(*packet, OsiLayer::Application);    
+    std::cout << "payload lenght: " << bytes.size() << std::endl;
 }
 
 void Throughpout_Receiver::schedule_timer()
