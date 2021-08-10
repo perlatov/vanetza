@@ -16,7 +16,7 @@ Throughpout_Sender::Throughpout_Sender(boost::asio::io_service& io, std::chrono:
 
 Throughpout_Sender::PortType Throughpout_Sender::port()
 {
-    return host_cast<uint16_t>(42);
+    return host_cast<uint16_t>(43);
 }
 
 void Throughpout_Sender::indicate(const DataIndication& indication, UpPacketPtr packet)

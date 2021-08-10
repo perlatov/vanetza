@@ -14,7 +14,7 @@ public:
 
 private:
 
-    unsigned int counter = 0;
+    uint16_t counter = 0;
 
     void schedule_timer();
     void message_counter();

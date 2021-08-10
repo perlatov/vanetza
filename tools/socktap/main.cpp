@@ -3,7 +3,7 @@
 #include "cam_application.hpp"
 #include "hello_application.hpp"
 #include "thr_s_application.hpp"
-#include "ping_s_application.hpp"
+#include "thr_r_application.hpp"
 #include "link_layer.hpp"
 #include "positioning.hpp"
 #include "router_context.hpp"
@@ -162,13 +162,20 @@ int main(int argc, const char** argv)
                 };
                 apps.emplace(app_name, std::move(thr_s));  
 
+            //thr_r app entry point    
+            } else if (app_name == "thr_r") {
+                std::unique_ptr<Throughpout_Receiver> thr_r {
+                    new Throughpout_Receiver(io_service, std::chrono::milliseconds(800))
+                };
+                apps.emplace(app_name, std::move(thr_r)); 
+
             //ping_s app entry point    
-            } else if (app_name == "ping_s") {
+            /*} else if (app_name == "ping_s") {
                 std::unique_ptr<Ping_Sender> ping_s {
                     new Ping_Sender(io_service, std::chrono::milliseconds(500))
                 };
                 apps.emplace(app_name, std::move(ping_s));          
-
+            */
             } else {
                 std::cerr << "skip unknown application '" << app_name << "'\n";
             }
