@@ -20,8 +20,9 @@ private:
 
     boost::asio::steady_timer timer_;
     std::chrono::milliseconds interval_;
-    uint16_t counter_new = 0;
+    uint16_t counter = 0;
     uint16_t counter_old = 0;
+    float    thrp{0.0f};
     unsigned lost_counter;
     unsigned m_received_messages;
 };

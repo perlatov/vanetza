@@ -5,6 +5,8 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/steady_timer.hpp>
 
+#define PAYLOAD 1365
+
 class Throughpout_Sender : public Application
 {
 public:

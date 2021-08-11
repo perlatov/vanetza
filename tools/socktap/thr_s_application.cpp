@@ -2,6 +2,7 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
+#include <chrono>
 #include <vector>
 
 // This is a very simple application that sends BTP-B messages with maxmimal allowed payload and message counter.
@@ -12,6 +13,7 @@ Throughpout_Sender::Throughpout_Sender(boost::asio::io_service& io, std::chrono:
     timer_(io), interval_(interval)
 {
     schedule_timer();
+    std::cout << "Sending message with " << PAYLOAD << " B payload every " << interval.count() << " milisecond(s)\n";
 }
 
 Throughpout_Sender::PortType Throughpout_Sender::port()
@@ -51,7 +53,7 @@ void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
         message_counter();
 
         // max. payload app can process
-        std::vector<uint8_t> vector_payload(1164);
+        std::vector<uint8_t> vector_payload(PAYLOAD);
 
         vector_payload.insert(vector_payload.begin(), counter);
         vector_payload.insert(vector_payload.begin(), counter >> 8);

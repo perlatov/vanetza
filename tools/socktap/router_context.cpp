@@ -57,8 +57,8 @@ void RouterContext::set_link_layer(LinkLayer* link_layer)
 void RouterContext::indicate(CohesivePacket&& packet, const EthernetHeader& hdr)
 {
     if (hdr.source != mib_.itsGnLocalGnAddr.mid() && hdr.type == access::ethertype::GeoNetworking) {
-        pakholder=packet.buffer();
-        std::cout << "received packet from " << hdr.source << " (" << packet.size() << " bytes)\n";
+        pakholder = packet.buffer();
+        //std::cout << "received packet from " << hdr.source << " (" << packet.size() << " bytes)\n";
         std::unique_ptr<PacketVariant> up { new PacketVariant(std::move(packet)) };
         trigger_.schedule(); // ensure the clock is up-to-date for the security entity
         router_.indicate(std::move(up), hdr.source, hdr.destination);
