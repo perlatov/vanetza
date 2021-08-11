@@ -51,7 +51,7 @@ void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
         message_counter();
 
         // max. payload app can process
-        std::vector<uint8_t> vector_payload(1365);
+        std::vector<uint8_t> vector_payload(1164);
 
         vector_payload.insert(vector_payload.begin(), counter);
         vector_payload.insert(vector_payload.begin(), counter >> 8);
