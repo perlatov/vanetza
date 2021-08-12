@@ -18,7 +18,9 @@ add_executable(socktap
     ethernet_device.cpp
     hello_application.cpp
     thr_s_application.cpp
+    thr_r_application.cpp
     ping_s_application.cpp
+    ping_r_application.cpp
     link_layer.cpp
     main.cpp
     positioning.cpp

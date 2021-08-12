@@ -7,7 +7,7 @@
 
 using namespace vanetza;
 
-extern vanetza::ByteBuffer pakholder;
+extern vanetza::ByteBuffer g_pakholder;
 
 Throughpout_Receiver::Throughpout_Receiver(boost::asio::io_service& io, std::chrono::milliseconds interval) :
     timer_(io), interval_(interval)
@@ -22,9 +22,9 @@ Throughpout_Receiver::PortType Throughpout_Receiver::port()
 
 void Throughpout_Receiver::indicate(const DataIndication& indication, UpPacketPtr packet)
 {
-    counter = (pakholder[79]<<8)|(pakholder[80]);
-    
-    //std::cout << "counter: " << counter << " \n";
+    //extract counter from packet and call counter processing
+    //data starts at byte 79
+    counter = (g_pakholder[79]<<8)|(g_pakholder[80]);    
     counter_processor();
 }
 
@@ -46,18 +46,22 @@ void Throughpout_Receiver::counter_processor()
     }
 
     counter_old = counter;
-
 }
 
 void Throughpout_Receiver::on_timer(const boost::system::error_code& ec)
 {
     if (ec != boost::asio::error::operation_aborted) {
         
-        thrp = ((float)m_received_messages*1514)/125000;
+        //increment pass counter/seconds counter
+        pass_counter++;
 
-        std::cout << "Received: " << m_received_messages << " messages/second" << std::endl;
-        std::cout << "Lost: " << lost_counter << " messages/second" << std::endl;
-        std::cout << "Throughput: " << std::setprecision(3) << thrp << " MBit/s" << std::endl;
+        //throughput calculation: msg_counter * msg_size (payload + 2 B. counter + 146 B. overhead) / (bytes in mbit)
+        thrp = ((float)m_received_messages*(g_pakholder.size()))/125000;
+        std::cout << "Pass:        " << pass_counter << std::endl;
+        std::cout << "Packet size: " << g_pakholder.size() << " B" << std::endl;
+        std::cout << "Received:    " << m_received_messages << " messages/second, ";
+        std::cout << "lost: " << lost_counter << " messages" << std::endl;
+        std::cout << "Throughput:  " << std::setprecision(3) << thrp << " MBit/s" << std::endl;
         
         std::cout << std::endl;
         m_received_messages = 0;

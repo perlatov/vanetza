@@ -4,6 +4,8 @@
 #include "hello_application.hpp"
 #include "thr_s_application.hpp"
 #include "thr_r_application.hpp"
+#include "ping_s_application.hpp"
+#include "ping_r_application.hpp"
 #include "link_layer.hpp"
 #include "positioning.hpp"
 #include "router_context.hpp"
@@ -30,11 +32,12 @@ int main(int argc, const char** argv)
         ("require-gnss-fix", "Suppress transmissions while GNSS position fix is missing")
         ("gn-version", po::value<unsigned>()->default_value(1), "GeoNetworking protocol version to use.")
         ("cam-interval", po::value<unsigned>()->default_value(1000), "CAM sending interval in milliseconds.")
-        ("thr_s-i", po::value<unsigned>()->default_value(1000), "BTP-B sending interval in milliseconds.")
+        ("tx-i", po::value<unsigned>()->default_value(1000), "BTP-B sending interval in milliseconds for thr app.")
+        ("pl", po::value<unsigned>()->default_value(1365), "payload size in Bytes for thr app.")
         ("print-rx-cam", "Print received CAMs")
         ("print-tx-cam", "Print generated CAMs")
         ("benchmark", "Enable benchmarking")
-        ("applications,a", po::value<std::vector<std::string>>()->default_value({"ca"}, "ca")->multitoken(), "Run applications [ca,hello,benchmark]")
+        ("applications,a", po::value<std::vector<std::string>>()->default_value({"ca"}, "ca")->multitoken(), "Run applications [ca,hello,benchmark,\nthr_s/_r,ping_s/_r]")
         ("non-strict", "Set MIB parameter ItsGnSnDecapResultHandling to NON_STRICT")
     ;
     add_positioning_options(options);
@@ -158,7 +161,7 @@ int main(int argc, const char** argv)
             //thr_s app entry point    
             } else if (app_name == "thr_s") {
                 std::unique_ptr<Throughpout_Sender> thr_s {
-                    new Throughpout_Sender(io_service, std::chrono::milliseconds(vm["thr_s-i"].as<unsigned>()))
+                    new Throughpout_Sender(io_service, std::chrono::milliseconds(vm["tx-i"].as<unsigned>()), vm["pl"].as<unsigned>())
                 };
                 apps.emplace(app_name, std::move(thr_s));  
 
@@ -170,12 +173,19 @@ int main(int argc, const char** argv)
                 apps.emplace(app_name, std::move(thr_r)); 
 
             //ping_s app entry point    
-            /*} else if (app_name == "ping_s") {
+            } else if (app_name == "ping_s") {
                 std::unique_ptr<Ping_Sender> ping_s {
-                    new Ping_Sender(io_service, std::chrono::milliseconds(500))
+                    new Ping_Sender(io_service, std::chrono::milliseconds(1000))
                 };
                 apps.emplace(app_name, std::move(ping_s));          
-            */
+
+            //ping_r app entry point    
+            } else if (app_name == "ping_r") {
+                std::unique_ptr<Ping_Responder> ping_r {
+                    new Ping_Responder(io_service)
+                };
+                apps.emplace(app_name, std::move(ping_r));                    
+            
             } else {
                 std::cerr << "skip unknown application '" << app_name << "'\n";
             }

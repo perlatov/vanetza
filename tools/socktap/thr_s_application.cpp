@@ -9,11 +9,14 @@
 
 using namespace vanetza;
 
-Throughpout_Sender::Throughpout_Sender(boost::asio::io_service& io, std::chrono::milliseconds interval) :
+unsigned payload_;
+
+Throughpout_Sender::Throughpout_Sender(boost::asio::io_service& io, std::chrono::milliseconds interval , unsigned payload) :
     timer_(io), interval_(interval)
 {
     schedule_timer();
-    std::cout << "Sending message with " << PAYLOAD << " B payload every " << interval.count() << " milisecond(s)\n";
+    payload_ = payload;
+    std::cout << "\nSending message with " << payload_+2 << " B payload every " << interval.count() << " milisecond(s)\n";
 }
 
 Throughpout_Sender::PortType Throughpout_Sender::port()
@@ -23,7 +26,7 @@ Throughpout_Sender::PortType Throughpout_Sender::port()
 
 void Throughpout_Sender::indicate(const DataIndication& indication, UpPacketPtr packet)
 {
-    //theoretically rx packet payload should be processed here - but i have no idea how to access and handle it
+    //nothing to do here
 }
 
 void Throughpout_Sender::schedule_timer()
@@ -35,7 +38,7 @@ void Throughpout_Sender::schedule_timer()
 void Throughpout_Sender::message_counter()
 {
     //couint to 2000, then reset to zero. 
-    //counter is packed in first two bytes of msg payload and separated with zero byte
+    //counter is packed in first two bytes of msg payload 
     if (counter == 0x7D0)
     {
         counter = 0;
@@ -52,8 +55,8 @@ void Throughpout_Sender::on_timer(const boost::system::error_code& ec)
 
         message_counter();
 
-        // max. payload app can process
-        std::vector<uint8_t> vector_payload(PAYLOAD);
+        // max. payload app can process (+2 B counter)
+        std::vector<uint8_t> vector_payload(payload_);
 
         vector_payload.insert(vector_payload.begin(), counter);
         vector_payload.insert(vector_payload.begin(), counter >> 8);

@@ -20,11 +20,12 @@ private:
 
     boost::asio::steady_timer timer_;
     std::chrono::milliseconds interval_;
-    uint16_t counter = 0;
-    uint16_t counter_old = 0;
+    uint16_t counter;
+    uint16_t counter_old;
     float    thrp{0.0f};
     unsigned lost_counter;
     unsigned m_received_messages;
+    unsigned pass_counter;
 };
 
 #endif /* THROUGHPOUT_RECEIVER_HPP_EUIC2VFR */
