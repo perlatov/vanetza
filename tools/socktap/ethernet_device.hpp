@@ -10,7 +10,10 @@ class EthernetDevice
 public:
     using protocol = boost::asio::generic::raw_protocol;
 
-    EthernetDevice(const char* devname);
+    unsigned int optval;
+    socklen_t optlen = sizeof(optval);
+
+    EthernetDevice(const char* devname, unsigned int opt1, unsigned int opt2, unsigned int opt3);
     EthernetDevice(const EthernetDevice&) = delete;
     EthernetDevice& operator=(const EthernetDevice&) = delete;
     ~EthernetDevice();

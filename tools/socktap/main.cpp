@@ -34,6 +34,9 @@ int main(int argc, const char** argv)
         ("cam-interval", po::value<unsigned>()->default_value(1000), "CAM sending interval in milliseconds.")
         ("tx-i", po::value<unsigned>()->default_value(1000), "BTP-B sending interval in milliseconds for thr app.")
         ("pl", po::value<unsigned>()->default_value(1365), "payload size in Bytes for thr app.")
+        ("prio", po::value<unsigned>()->default_value(1), "value for SO_PRIORITY, range 0 to 6.")
+        ("sotype", po::value<unsigned>()->default_value(2), "value for SO_TYPE, SOCK_DGRAM = 2, SOCK_RAW = 3, SOCK_PACKET = 10.")
+        ("domain", po::value<unsigned>()->default_value(1), "value for socket domain, AF_LOCAL = 1, AF_INET = 2, AF_LLC = 26 ")
         ("print-rx-cam", "Print received CAMs")
         ("print-tx-cam", "Print generated CAMs")
         ("benchmark", "Enable benchmarking")
@@ -73,7 +76,8 @@ int main(int argc, const char** argv)
         TimeTrigger trigger(io_service);
 
         const char* device_name = vm["interface"].as<std::string>().c_str();
-        EthernetDevice device(device_name);
+        //const char* opt1 = vm["prio"];
+        EthernetDevice device(device_name, vm["prio"].as<unsigned>(), vm["sotype"].as<unsigned>(), vm["domain"].as<unsigned>());
         vanetza::MacAddress mac_address = device.address();
 
         if (vm.count("mac-address")) {
